@@ -1,0 +1,49 @@
+$('.cl-Remove-DatePicker').attr("inputmode","numeric")
+
+var objKeyPressData = "";
+
+var objDatePickerElements = $('.cl-Remove-DatePicker');
+for(var iDatePickerElement in objDatePickerElements)
+{
+	objDatePickerElements[iDatePickerElement].oninput = function() 
+	{
+	    var objCurrentValue = this.value, objLastValue = $(this).data('lastVal');
+		//Get Inserted Characters
+        var objInsertedCharacter = FindAddedRemovedCharacters(objCurrentValue, objLastValue);
+		
+		if (!isNumberCheckMobile(objInsertedCharacter)) 
+		{
+			this.value = objLastValue;
+		}
+		
+		//Store Current Value As  Last Value
+        $(this).data('lastVal', this.value);
+	}
+	
+	objDatePickerElements[iDatePickerElement].onfocus= function()
+	{
+		$(this).data('lastVal', this.value);
+	}
+}
+
+function isNumberCheckMobile(objCharacterEntered)
+{
+	return new RegExp('[0-9]').test(objCharacterEntered);
+}
+
+
+
+function FindAddedRemovedCharacters(objCurrentValue, objPrevValue) 
+{
+	var objDelta = '';
+
+	for (var iCharacter = 0; iCharacter < objCurrentValue.length; iCharacter++)
+	{
+		var objCurrentString = objCurrentValue.substr(0, iCharacter) + objCurrentValue.substr(iCharacter+ objCurrentValue.length - objPrevValue.length);
+		
+		if (objCurrentString === objPrevValue) 
+			objDelta = objCurrentValue.substr(iCharacter, objCurrentValue.length - objPrevValue.length);
+	}
+
+	return objDelta;
+}
